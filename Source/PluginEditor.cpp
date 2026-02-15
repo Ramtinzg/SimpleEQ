@@ -11,7 +11,14 @@
 
 //==============================================================================
 SimpleEQAudioProcessorEditor::SimpleEQAudioProcessorEditor (SimpleEQAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor (p)
+    : AudioProcessorEditor (&p), audioProcessor (p),
+    peakFreqSliderAttachment(audioProcessor.apvts, "peak_freq", peakFreqSlider),
+    peakQualitySliderAttachment(audioProcessor.apvts, "peak_gain", peakGainSlider),
+    peakGainSliderAttachment(audioProcessor.apvts, "peak_quality", peakQualitySlider),
+    lowCutFreqSliderAttachment(audioProcessor.apvts, "lowcut_freq", lowCutFreqSlider),
+    highCutFreqSliderAttachment(audioProcessor.apvts, "highcut_freq", highCutFreqSlider),
+    lowCutSlopeSliderAttachment(audioProcessor.apvts, "lowcut_slope", lowCutSlopeSlider),
+    highCutSlopeSliderAttachment(audioProcessor.apvts, "highcut_slope", highCutSlopeSlider)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
@@ -50,7 +57,7 @@ void SimpleEQAudioProcessorEditor::resized()
     lowCutSlopeSlider.setBounds(lowCutArea);
     
     highCutFreqSlider.setBounds(highCutArea.removeFromTop(highCutArea.getHeight() / 2.f));
-    highCutSlopeSlider.setBounds(highCutArea); 
+    highCutSlopeSlider.setBounds(highCutArea);
 
     peakFreqSlider.setBounds(bounds.removeFromTop(bounds.getHeight() / 3.f));
     peakGainSlider.setBounds(bounds.removeFromTop(bounds.getHeight() / 2.f));
