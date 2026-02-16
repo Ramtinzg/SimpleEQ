@@ -82,7 +82,10 @@ void updateCutFilter(ChainType& chain,
 
 inline auto makeLowCutFilter(const ChainSettings& chainSettings, double sampleRate)
 {
-    return juce::dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(chainSettings.lowCutFreq,
+    const auto sr = sampleRate;
+    const float maxCut = (float)(sr * 0.49f);   // stay safely below Nyquist
+    const float safeLowCut = juce::jlimit(20.0f, maxCut, chainSettings.lowCutFreq);
+    return juce::dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(safeLowCut,
                                                                                        sampleRate,
                                                                                        2 * (static_cast<int>(chainSettings.lowCutSlope) + 1)
                                                                                        );

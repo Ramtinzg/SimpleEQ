@@ -13,8 +13,8 @@
 SimpleEQAudioProcessorEditor::SimpleEQAudioProcessorEditor (SimpleEQAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p),
     peakFreqSliderAttachment(audioProcessor.apvts, "peak_freq", peakFreqSlider),
-    peakQualitySliderAttachment(audioProcessor.apvts, "peak_gain", peakGainSlider),
-    peakGainSliderAttachment(audioProcessor.apvts, "peak_quality", peakQualitySlider),
+    peakGainSliderAttachment(audioProcessor.apvts, "peak_gain", peakGainSlider),
+    peakQualitySliderAttachment(audioProcessor.apvts, "peak_quality", peakQualitySlider),
     lowCutFreqSliderAttachment(audioProcessor.apvts, "lowcut_freq", lowCutFreqSlider),
     highCutFreqSliderAttachment(audioProcessor.apvts, "highcut_freq", highCutFreqSlider),
     lowCutSlopeSliderAttachment(audioProcessor.apvts, "lowcut_slope", lowCutSlopeSlider),
@@ -62,6 +62,9 @@ void SimpleEQAudioProcessorEditor::paint (juce::Graphics& g)
     
     auto sampleRate = audioProcessor.getSampleRate();
     
+    if (sampleRate <= 0.0)
+        return;
+    
     
     //-----------
     double nyquist = 0.5 * sampleRate;
@@ -75,10 +78,13 @@ void SimpleEQAudioProcessorEditor::paint (juce::Graphics& g)
     for(int i = 0; i < w; ++i)
     {
         double mag = 1.f;
-        auto freq = mapToLog10(double(i) / double(w), 20.0, 20000.0);
+        auto freq = mapToLog10(double(i) / double(w), 20.0, nyquist);
+        const double minFreq = 1.0;                  // must be > 0
+        const double maxFreq = nyquist * 0.999999;   // slightly below Nyquist
+        freq = juce::jlimit(minFreq, maxFreq, freq);
         
         //-------------
-        freq = juce::jlimit(0.0, nyquist, freq);
+//        freq = juce::jlimit(0.0, nyquist, freq);
         //-------------
         
         if(! monoChain.isBypassed<ChainPositions::Peak>() )
@@ -165,6 +171,12 @@ void SimpleEQAudioProcessorEditor::timerCallback()
         auto chainSettings = getChainSettings(audioProcessor.apvts);
         auto peakCoefficients = makePeakFilter(chainSettings, audioProcessor.getSampleRate());
         updateCoefficients(monoChain.get<ChainPositions::Peak>().coefficients, peakCoefficients);
+        
+        auto lowCutCoefficients = makeLowCutFilter(chainSettings, audioProcessor.getSampleRate());
+        auto highCutCoefficients = makeHighCutFilter(chainSettings, audioProcessor.getSampleRate());
+        updateCutFilter(monoChain.get<ChainPositions::LowCut>(), lowCutCoefficients, chainSettings.lowCutSlope);
+        updateCutFilter(monoChain.get<ChainPositions::HighCut>(), highCutCoefficients, chainSettings.highCutSlope);
+        
         //signal a repaint
         repaint();
     }
