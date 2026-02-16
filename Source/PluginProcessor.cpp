@@ -253,29 +253,18 @@ void updateCoefficients(Coefficients &old, const Coefficients &replacements){
 
 
 void SimpleEQAudioProcessor::updateLowCutFilters(const ChainSettings &chainSettings){
-    
-    auto cutCoefficients = juce::dsp::FilterDesign<float>::designIIRHighpassHighOrderButterworthMethod(chainSettings.lowCutFreq,
-                                                                                                       getSampleRate(),
-                                                                                                       2 * (static_cast<int>(chainSettings.lowCutSlope) + 1)
-                                                                                                       );
+    auto cutCoefficients = makeLowCutFilter(chainSettings, getSampleRate());
     auto& leftLowCut = leftChain.get<ChainPositions::LowCut>();
-    updateCutFilter(leftLowCut, cutCoefficients, chainSettings.lowCutSlope);
     auto& rightLowCut = rightChain.get<ChainPositions::LowCut>();
     updateCutFilter(rightLowCut, cutCoefficients, chainSettings.lowCutSlope);
+    updateCutFilter(leftLowCut, cutCoefficients, chainSettings.lowCutSlope);
 }
 
 
 
 
 void SimpleEQAudioProcessor::updateHighCutFilters(const ChainSettings &chainSettings){
-    const auto sr = getSampleRate();
-    const float maxCut = (float)(sr * 0.49); //fix the WHISTLING when at >11k freq
-    const float safeHighCut = juce::jlimit (20.0f, maxCut, chainSettings.highCutFreq);
-    
-    auto highCutCoefficients = juce::dsp::FilterDesign<float>::designIIRLowpassHighOrderButterworthMethod(safeHighCut,
-                                                                                                          sr,
-                                                                                                          2 * (static_cast<int>(chainSettings.highCutSlope) +1)
-                                                                                                          );
+    auto highCutCoefficients = makeHighCutFilter(chainSettings, getSampleRate());
     auto& leftHighCut = leftChain.get<ChainPositions::HighCut>();
     auto& rightHighCut = rightChain.get<ChainPositions::HighCut>();
     
