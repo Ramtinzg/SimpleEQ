@@ -78,6 +78,8 @@ private:
     juce::Atomic<bool> ParametersChanged {false};
     
     MonoChain monoChain;
+    
+    void updateChain();
 };
 
 //==============================================================================
