@@ -144,14 +144,23 @@ void ResponseCurveComponent::paint (juce::Graphics& g)
 //==============================================================================
 SimpleEQAudioProcessorEditor::SimpleEQAudioProcessorEditor (SimpleEQAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor (p),
-    responseCurveComponent(audioProcessor),
-    peakFreqSliderAttachment(audioProcessor.apvts, "peak_freq", peakFreqSlider),
-    peakGainSliderAttachment(audioProcessor.apvts, "peak_gain", peakGainSlider),
-    peakQualitySliderAttachment(audioProcessor.apvts, "peak_quality", peakQualitySlider),
-    lowCutFreqSliderAttachment(audioProcessor.apvts, "lowcut_freq", lowCutFreqSlider),
-    highCutFreqSliderAttachment(audioProcessor.apvts, "highcut_freq", highCutFreqSlider),
-    lowCutSlopeSliderAttachment(audioProcessor.apvts, "lowcut_slope", lowCutSlopeSlider),
-    highCutSlopeSliderAttachment(audioProcessor.apvts, "highcut_slope", highCutSlopeSlider)
+peakFreqSlider(*audioProcessor.apvts.getParameter("peak_freq"), "Hz"),
+peakGainSlider(*audioProcessor.apvts.getParameter("peak_gain"), "dB"),
+peakQualitySlider(*audioProcessor.apvts.getParameter("peak_quality"), ""),
+lowCutFreqSlider(*audioProcessor.apvts.getParameter("lowcut_freq"), "Hz"),
+highCutFreqSlider(*audioProcessor.apvts.getParameter("highcut_freq"),  "Hz"),
+lowCutSlopeSlider(*audioProcessor.apvts.getParameter("lowcut_slope"), "dB/Oct"),
+highCutSlopeSlider(*audioProcessor.apvts.getParameter("highcut_slope"), "dB/Oct"),
+
+
+responseCurveComponent(audioProcessor),
+peakFreqSliderAttachment(audioProcessor.apvts, "peak_freq", peakFreqSlider),
+peakGainSliderAttachment(audioProcessor.apvts, "peak_gain", peakGainSlider),
+peakQualitySliderAttachment(audioProcessor.apvts, "peak_quality", peakQualitySlider),
+lowCutFreqSliderAttachment(audioProcessor.apvts, "lowcut_freq", lowCutFreqSlider),
+highCutFreqSliderAttachment(audioProcessor.apvts, "highcut_freq", highCutFreqSlider),
+lowCutSlopeSliderAttachment(audioProcessor.apvts, "lowcut_slope", lowCutSlopeSlider),
+highCutSlopeSliderAttachment(audioProcessor.apvts, "highcut_slope", highCutSlopeSlider)
 {
     // Make sure that before the constructor has finished, you've set the
     // editor's size to whatever you need it to be.
