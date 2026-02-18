@@ -228,8 +228,7 @@ void ResponseCurveComponent::paint (juce::Graphics& g)
     g.fillAll (Colours::black);
     g.drawImage(background, getLocalBounds().toFloat());
     
-//    auto responseArea = getLocalBounds();
-    auto responseArea = getAnalysisArea();   /*getRenderArea();*/
+    auto responseArea = getAnalysisArea();
 
     auto w = responseArea.getWidth();
     auto& lowcut = monoChain.get<ChainPositions::LowCut>();
@@ -259,9 +258,6 @@ void ResponseCurveComponent::paint (juce::Graphics& g)
         const double maxFreq = nyquist * 0.999999;   // slightly below Nyquist
         freq = juce::jlimit(minFreq, maxFreq, freq);
         
-        //-------------
-//        freq = juce::jlimit(0.0, nyquist, freq);
-        //-------------
         
         if(! monoChain.isBypassed<ChainPositions::Peak>() )
             mag *= peak.coefficients->getMagnitudeForFrequency(freq, sampleRate);
@@ -319,9 +315,9 @@ void ResponseCurveComponent::resized()
     
     Array<float> freqs
     {
-        20, /*30, 40,*/ 50, 100,
-        200, /*300, 400,*/ 500, 1000,
-        2000, /*3000, 4000,*/ 5000, 10000,
+        20, 50, 100,
+        200, 500, 1000,
+        2000, 5000, 10000,
         20000
     };
     
@@ -340,11 +336,9 @@ void ResponseCurveComponent::resized()
     }
     
     g.setColour(Colours::dimgrey);
-//    for( auto f : freqs )
+
     for( auto x : xs )
     {
-//        auto normX = mapFromLog10(f, 20.f, 20000.f);
-//        g.drawVerticalLine(getWidth() * normX, 0.f, getHeight());
         g.drawVerticalLine(x, top, bottom);
     }
     
@@ -358,10 +352,8 @@ void ResponseCurveComponent::resized()
         auto y = jmap(gDb, -24.f, 24.f, float(bottom), float(top));
         g.setColour(gDb == 0.f ? Colour(0u, 127u, 1u) : Colours::darkgrey);
         g.drawHorizontalLine(y, left, right);
-//        g.drawHorizontalLine(y, 0, getWidth());
     }
-//    g.drawRect(getAnalysisArea());
-    
+
     g.setColour(Colours::lightgrey);
     const int fontHeight = 10;
     g.setFont(fontHeight);
@@ -392,6 +384,9 @@ void ResponseCurveComponent::resized()
         r.setY(1);
         
         g.drawFittedText(str, r, juce::Justification::centred, 1);
+        
+        
+        
     }
     
     
@@ -412,6 +407,16 @@ void ResponseCurveComponent::resized()
         g.setColour(gDb == 0.f ? Colour(0u, 172u, 1u) : Colours::lightgrey);
         
         g.drawFittedText(str, r, juce::Justification::centred, 1);
+        
+        str.clear();
+        str << (gDb - 24.f);
+        
+        r.setX(1);
+        textWidth = g.getCurrentFont().getStringWidth(str);
+        r.setSize(textWidth, fontHeight);
+        g.setColour(Colours::lightgrey);
+        g.drawFittedText(str, r, juce::Justification::centred, 1);
+        
     }
     
     
