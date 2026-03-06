@@ -100,7 +100,7 @@ struct AnalyzerPathGenerator
                       float negativeInfinity)
     {
         auto top = fftBounds.getY();
-        auto bottom = fftBounds.getHeight();
+        auto bottom = fftBounds.getBottom();
         auto width = fftBounds.getWidth();
 
         int numBins = (int)fftSize / 2;
@@ -304,6 +304,14 @@ private:
                highCutFreqSliderAttachment,
                lowCutSlopeSliderAttachment,
                highCutSlopeSliderAttachment;
+    
+    juce::ToggleButton lowcutBypassButton, peakBypassButton, highcutBypassButton, analyzerEnabledButton;
+        
+    using ButtonAttachment = APVTS::ButtonAttachment;
+    ButtonAttachment lowcutBypassButtonAttachment,
+                     peakBypassButtonAttachment,
+                     highcutBypassButtonAttachment,
+                     analyzerEnabledButtonAttachment;
     
     std::vector<juce::Component*> getComps();
 

@@ -73,7 +73,7 @@ private:
 
 enum Channel{
     Right, //effectively zero
-    Left  // effectively one
+    Left // effectively one
 };
 
 template<typename BlockType>
@@ -157,6 +157,7 @@ struct ChainSettings{
     float lowCutFreq{0}, highCutFreq{0};
 //    int lowCutSlope{Slope::Slope_12}, highCutSlope{Slope::Slope_12};
     Slope lowCutSlope{Slope_12}, highCutSlope{Slope_12};
+    bool lowCutBypassed { false }, peakBypassed { false }, highCutBypassed { false };
 };
 
 ChainSettings getChainSettings(juce::AudioProcessorValueTreeState& apvts);
