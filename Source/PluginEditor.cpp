@@ -675,6 +675,7 @@ analyzerEnabledButtonAttachment(audioProcessor.apvts, "Analyzer_Enabled", analyz
     peakBypassButton.setLookAndFeel(&lnf);
     lowcutBypassButton.setLookAndFeel(&lnf);
     highcutBypassButton.setLookAndFeel(&lnf);
+    analyzerEnabledButton.setLookAndFeel(&lnf);
     
     setSize (600, 480);
 }
@@ -684,6 +685,7 @@ SimpleEQAudioProcessorEditor::~SimpleEQAudioProcessorEditor()
     peakBypassButton.setLookAndFeel(nullptr);
     lowcutBypassButton.setLookAndFeel(nullptr);
     highcutBypassButton.setLookAndFeel(nullptr);
+    analyzerEnabledButton.setLookAndFeel(nullptr);
 }
 
 
@@ -698,6 +700,16 @@ void SimpleEQAudioProcessorEditor::paint (juce::Graphics& g)
 void SimpleEQAudioProcessorEditor::resized()
 {
     auto bounds = getLocalBounds();
+    
+    auto analyzerEnabledArea = bounds.removeFromTop(25);
+    analyzerEnabledArea.setWidth(100);
+    analyzerEnabledArea.setX(5);
+    analyzerEnabledArea.removeFromTop(2);
+    
+    analyzerEnabledButton.setBounds(analyzerEnabledArea);
+    
+    bounds.removeFromTop(5);
+    
     float hRatio = 25.f / 100.f; /*JUCE_LIVE_CONSTANT(33) / 100.f;*/
     auto responseArea = bounds.removeFromTop(bounds.getHeight() * hRatio);
     
